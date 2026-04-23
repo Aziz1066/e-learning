@@ -33,19 +33,16 @@ public class AuthController {
                                @RequestParam String role,
                                Model model) {
         
-        // Vérifier si l'email existe déjà
         if (utilisateurRepository.findByEmail(email).isPresent()) {
             model.addAttribute("error", "Cet email est déjà utilisé.");
             return "register";
         }
 
-        // Créer un nouvel utilisateur
         Utilisateur utilisateur = new Utilisateur();
         utilisateur.setNom(nom);
         utilisateur.setEmail(email);
         utilisateur.setMotDePasse(passwordEncoder.encode(password));
         
-        // Assigner le rôle
         if ("FORMATEUR".equals(role)) {
             utilisateur.setRole(Role.FORMATEUR);
         } else {
@@ -55,6 +52,12 @@ public class AuthController {
         utilisateurRepository.save(utilisateur);
         
         model.addAttribute("success", "Inscription réussie ! Vous pouvez maintenant vous connecter.");
+        return "login";
+    }
+    
+    // AJOUTE CETTE MÉTHODE 👇
+    @GetMapping("/login")
+    public String showLoginForm() {
         return "login";
     }
 }

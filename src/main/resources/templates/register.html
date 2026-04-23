@@ -24,7 +24,6 @@
             overflow-x: hidden;
         }
         
-        /* decorative blobs - same as homepage */
         body::before {
             content: "";
             position: absolute;
@@ -182,7 +181,6 @@
             transform: translateY(-2px);
         }
         
-        /* Role selection cards */
         .role-option {
             border: 2px solid #E5E7EB;
             border-radius: 24px;
@@ -227,30 +225,23 @@
             color: #8B5CF6;
         }
         
-        .alert-custom {
-            position: fixed;
-            top: 90px;
-            right: 25px;
-            z-index: 1100;
-            border-radius: 60px;
-            padding: 12px 28px;
+        .alert-message {
+            border-radius: 16px;
+            padding: 12px 20px;
+            margin-bottom: 20px;
             font-weight: 500;
-            backdrop-filter: blur(12px);
-            background: rgba(255,255,255,0.96);
-            border-left: 5px solid;
-            box-shadow: 0 15px 30px -12px rgba(0,0,0,0.2);
-            animation: slideRight 0.4s ease-out;
         }
         
-        @keyframes slideRight {
-            from {
-                opacity: 0;
-                transform: translateX(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .alert-error {
+            background: #FEF2F2;
+            color: #B91C1C;
+            border-left: 4px solid #EF4444;
+        }
+        
+        .alert-success {
+            background: #ECFDF5;
+            color: #065F46;
+            border-left: 4px solid #10B981;
         }
         
         @media (max-width: 768px) {
@@ -301,13 +292,13 @@
                             </h3>
                             
                             <!-- Error message -->
-                            <div th:if="${error}" class="alert alert-custom" role="alert" style="background: #FEF2F2; color: #B91C1C; border-left-color: #EF4444; position: relative; top: 0; right: 0; margin-bottom: 20px;">
+                            <div th:if="${error}" class="alert-message alert-error" role="alert">
                                 <i class="fas fa-exclamation-triangle me-2"></i><span th:text="${error}"></span>
                             </div>
                             
-                            <!-- Success message (if any) -->
-                            <div th:if="${param.success}" class="alert alert-custom" role="alert" style="background: #ECFDF5; color: #065F46; border-left-color: #10B981; position: relative; top: 0; right: 0; margin-bottom: 20px;">
-                                <i class="fas fa-check-circle me-2"></i> Inscription réussie ! Vous pouvez maintenant vous connecter.
+                            <!-- Success message -->
+                            <div th:if="${success}" class="alert-message alert-success" role="alert">
+                                <i class="fas fa-check-circle me-2"></i><span th:text="${success}"></span>
                             </div>
                             
                             <form th:action="@{/register}" method="post">
@@ -409,11 +400,9 @@
     
     <script>
         function selectRole(role) {
-            // Reset styles
             document.getElementById('role-apprenant').classList.remove('selected');
             document.getElementById('role-formateur').classList.remove('selected');
             
-            // Apply selected style
             if (role === 'APPRENANT') {
                 document.getElementById('role-apprenant').classList.add('selected');
                 document.querySelector('input[value="APPRENANT"]').checked = true;
@@ -423,20 +412,7 @@
             }
         }
         
-        // Default selection
         document.getElementById('role-apprenant').classList.add('selected');
-        
-        // Auto-hide alerts after 5 seconds
-        setTimeout(function() {
-            var alerts = document.querySelectorAll('.alert-custom');
-            alerts.forEach(function(alert) {
-                alert.style.opacity = '0';
-                alert.style.transition = 'opacity 0.5s';
-                setTimeout(function() {
-                    if(alert) alert.style.display = 'none';
-                }, 500);
-            });
-        }, 5000);
     </script>
 </body>
 </html>
