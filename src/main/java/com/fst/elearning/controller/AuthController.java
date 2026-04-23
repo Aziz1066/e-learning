@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import com.fst.elearning.entity.Role;
 import com.fst.elearning.entity.Utilisateur;
@@ -32,32 +30,31 @@ public class AuthController {
                                @RequestParam String password,
                                @RequestParam String role,
                                Model model) {
-        
+
         if (utilisateurRepository.findByEmail(email).isPresent()) {
-            model.addAttribute("error", "Cet email est déjà utilisé.");
+            model.addAttribute("error", "Email déjà utilisé");
             return "register";
         }
 
-        Utilisateur utilisateur = new Utilisateur();
-        utilisateur.setNom(nom);
-        utilisateur.setEmail(email);
-        utilisateur.setMotDePasse(passwordEncoder.encode(password));
-        
+        Utilisateur u = new Utilisateur();
+        u.setNom(nom);
+        u.setEmail(email);
+        u.setMotDePasse(passwordEncoder.encode(password));
+
         if ("FORMATEUR".equals(role)) {
-            utilisateur.setRole(Role.FORMATEUR);
+            u.setRole(Role.FORMATEUR);
         } else {
-            utilisateur.setRole(Role.APPRENANT);
+            u.setRole(Role.APPRENANT);
         }
-        
-        utilisateurRepository.save(utilisateur);
-        
-        model.addAttribute("success", "Inscription réussie ! Vous pouvez maintenant vous connecter.");
+
+        utilisateurRepository.save(u);
+
+        model.addAttribute("success", "Inscription réussie");
         return "login";
     }
-    
-    // AJOUTE CETTE MÉTHODE 👇
+
     @GetMapping("/login")
-    public String showLoginForm() {
+    public String login() {
         return "login";
     }
 }

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Apprenant Dashboard</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f3e8ff, #ffffff);
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(90deg, #c084fc, #a855f7);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* SEARCH BAR */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px;
+        }
+
+        .search-box {
+            width: 50%;
+            padding: 12px;
+            border-radius: 25px;
+            border: 2px solid #d8b4fe;
+            outline: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .search-box:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 10px #d8b4fe;
+        }
+
+        /* COURSES GRID */
+        .courses {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(168, 85, 247, 0.15);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(168, 85, 247, 0.25);
+        }
+
+        .course-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #6b21a8;
+        }
+
+        .course-desc {
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .btn {
+            margin-top: 15px;
+            display: inline-block;
+            padding: 8px 15px;
+            background: #a855f7;
+            color: white;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #7e22ce;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    🎓 Apprenant Dashboard
+</div>
+
+<!-- SEARCH -->
+<div class="search-container">
+    <input type="text" class="search-box" placeholder="🔍 Rechercher un cours...">
+</div>
+
+<!-- COURSES -->
+<div class="courses">
+
+    <div class="card">
+        <div class="course-title">Spring Boot Basics</div>
+        <div class="course-desc">Learn fundamentals of Spring Boot framework.</div>
+        <a href="#" class="btn">Voir cours</a>
+    </div>
+
+    <div class="card">
+        <div class="course-title">Java OOP</div>
+        <div class="course-desc">Master object oriented programming in Java.</div>
+        <a href="#" class="btn">Voir cours</a>
+    </div>
+
+    <div class="card">
+        <div class="course-title">Web Development</div>
+        <div class="course-desc">HTML, CSS, JS modern development.</div>
+        <a href="#" class="btn">Voir cours</a>
+    </div>
+
+</div>
+
+</body>
+</html>
