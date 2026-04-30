@@ -9,6 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/formateur")
@@ -17,23 +19,26 @@ public class FormateurController {
     private final CoursRepository coursRepository;
     private final ModuleRepository moduleRepository;
     private final LeconRepository leconRepository;
+    private final UtilisateurRepository utilisateurRepository;
 
-    // ROOT upload folder
     private final String UPLOAD_DIRECTORY =
             System.getProperty("user.dir") + "/uploads/";
 
     public FormateurController(CoursRepository coursRepository,
                                ModuleRepository moduleRepository,
-                               LeconRepository leconRepository) {
+                               LeconRepository leconRepository,
+                               UtilisateurRepository utilisateurRepository) {
+
         this.coursRepository = coursRepository;
         this.moduleRepository = moduleRepository;
         this.leconRepository = leconRepository;
+        this.utilisateurRepository = utilisateurRepository;
     }
 
-    // ======================== COURS ========================
+    // ================= COURS =================
 
     @GetMapping("/cours")
-    public String listeMesCours(Model model) {
+    public String listeCours(Model model) {
         model.addAttribute("listCourses", coursRepository.findAll());
         return "formateur/gestion-cours";
     }
@@ -41,13 +46,23 @@ public class FormateurController {
     @GetMapping("/cours/nouveau")
     public String nouveauCours(Model model) {
         model.addAttribute("cours", new Cours());
+        model.addAttribute("niveaux", Niveau.values());
         return "formateur/add-cours";
     }
 
     @PostMapping("/cours/save")
     public String enregistrerCours(@ModelAttribute Cours cours,
-                                   @RequestParam("file") MultipartFile file) throws IOException {
+                                   @RequestParam("file") MultipartFile file,
+                                   Principal principal) throws IOException {
 
+        // GET logged user
+        Utilisateur formateur = utilisateurRepository
+                .findByEmail(principal.getName())
+                .orElseThrow();
+
+        cours.setFormateur(formateur);
+
+        // upload image
         if (!file.isEmpty()) {
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
@@ -66,24 +81,11 @@ public class FormateurController {
         return "redirect:/formateur/cours";
     }
 
-    @GetMapping("/cours/delete/{id}")
-    public String deleteCours(@PathVariable Long id) throws IOException {
-        Cours cours = coursRepository.findById(id).orElseThrow();
-
-        if (cours.getImageUrl() != null) {
-            Path path = Paths.get(System.getProperty("user.dir") + cours.getImageUrl());
-            Files.deleteIfExists(path);
-        }
-
-        coursRepository.delete(cours);
-
-        return "redirect:/formateur/cours";
-    }
-
-    // ======================== MODULES ========================
+    // ================= MODULES =================
 
     @GetMapping("/cours/{coursId}/modules")
-    public String gestionModules(@PathVariable Long coursId, Model model) {
+    public String modules(@PathVariable Long coursId, Model model) {
+
         Cours cours = coursRepository.findById(coursId).orElseThrow();
 
         model.addAttribute("cours", cours);
@@ -95,50 +97,40 @@ public class FormateurController {
     }
 
     @PostMapping("/cours/{coursId}/modules/save")
-    public String enregistrerModule(@PathVariable Long coursId,
-                                    @ModelAttribute CoursModule coursModule) {
+    public String saveModule(@PathVariable Long coursId,
+                             @ModelAttribute CoursModule module) {
 
-        coursModule.setCours(coursRepository.findById(coursId).orElseThrow());
-        moduleRepository.save(coursModule);
-
-        return "redirect:/formateur/cours/" + coursId + "/modules";
-    }
-
-    @GetMapping("/modules/delete/{id}")
-    public String deleteModule(@PathVariable Long id) {
-        CoursModule module = moduleRepository.findById(id).orElseThrow();
-        Long coursId = module.getCours().getId();
-
-        moduleRepository.delete(module);
+        module.setCours(coursRepository.findById(coursId).orElseThrow());
+        moduleRepository.save(module);
 
         return "redirect:/formateur/cours/" + coursId + "/modules";
     }
 
-    // ======================== LEÇONS ========================
+    // ================= LEÇONS =================
 
     @GetMapping("/modules/{moduleId}/lecons")
-    public String gestionLecons(@PathVariable Long moduleId, Model model) {
+    public String lecons(@PathVariable Long moduleId, Model model) {
+
         CoursModule module = moduleRepository.findById(moduleId).orElseThrow();
 
+        List<Lecon> lecons =
+                leconRepository.findByModuleIdOrderByOrdreAsc(moduleId);
+
         model.addAttribute("module", module);
-        model.addAttribute("lecons",
-                leconRepository.findByModuleIdOrderByOrdreAsc(moduleId));
+        model.addAttribute("lecons", lecons);
         model.addAttribute("newLecon", new Lecon());
 
         return "formateur/lecons";
     }
 
     @PostMapping("/modules/{moduleId}/lecons/save")
-    public String enregistrerLecon(@PathVariable Long moduleId,
-                                   @ModelAttribute Lecon lecon,
-                                   @RequestParam("file") MultipartFile file) throws IOException {
+    public String saveLecon(@PathVariable Long moduleId,
+                            @ModelAttribute Lecon lecon,
+                            @RequestParam("file") MultipartFile file) throws IOException {
 
-        // set module first
         lecon.setModule(moduleRepository.findById(moduleId).orElseThrow());
 
-        // upload PDF
         if (!file.isEmpty()) {
-
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
             Path uploadPath = Paths.get(UPLOAD_DIRECTORY + "lecons/");
@@ -157,6 +149,7 @@ public class FormateurController {
 
     @GetMapping("/lecons/delete/{id}")
     public String deleteLecon(@PathVariable Long id) throws IOException {
+
         Lecon lecon = leconRepository.findById(id).orElseThrow();
         Long moduleId = lecon.getModule().getId();
 

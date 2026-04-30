@@ -17,13 +17,11 @@ body {
     background-blend-mode: overlay;
 }
 
-/* LAYOUT */
 .wrapper {
     display:flex;
     height:100vh;
 }
 
-/* SIDEBAR */
 .sidebar {
     width:320px;
     background: rgba(255,255,255,0.7);
@@ -33,7 +31,6 @@ body {
     border-right:1px solid rgba(0,0,0,0.05);
 }
 
-/* SEARCH */
 .search-box input {
     width:100%;
     padding:10px;
@@ -44,7 +41,6 @@ body {
     background:#f1f1ff;
 }
 
-/* FILTER */
 .filter select {
     width:100%;
     padding:8px;
@@ -53,7 +49,6 @@ body {
     margin-bottom:15px;
 }
 
-/* MODULE */
 .module {
     margin-bottom:15px;
     padding:15px;
@@ -73,33 +68,39 @@ body {
     color:#4f46e5;
 }
 
-/* LESSONS */
 .lessons {
     display:none;
     margin-top:10px;
 }
 
 .lesson {
-    padding:8px 10px;
-    margin-top:5px;
-    border-radius:8px;
+    padding: 8px 10px;
+    margin-top: 5px;
+    border-radius: 8px;
     background: rgba(255,255,255,0.8);
-    transition:0.3s;
+    transition: 0.3s;
 }
 
+.lesson.done {
+    background: #22c55e;
+    color: white;
+    font-weight: 600;
+}
+
+.lesson.done a {
+    color: white;
+}
 .lesson:hover {
     background:#6366f1;
     color:white;
     transform:translateX(5px);
 }
 
-/* MAIN CONTENT */
 .content {
     flex:1;
     padding:40px;
 }
 
-/* COURSE CARD */
 .course-card {
     background: rgba(255,255,255,0.8);
     backdrop-filter: blur(20px);
@@ -110,14 +111,12 @@ body {
     animation:fadeIn 1s ease;
 }
 
-/* TITLE */
 .course-card h1 {
     font-size:34px;
     margin-bottom:10px;
     color:#4f46e5;
 }
 
-/* TAGS */
 .tags {
     margin-top:15px;
 }
@@ -132,7 +131,6 @@ body {
     font-size:13px;
 }
 
-/* EXTRA INFO */
 .extra {
     margin-top:20px;
     display:flex;
@@ -141,26 +139,24 @@ body {
     color:#555;
 }
 
-/* RATING */
 .stars {
     color:gold;
 }
 
-/* PROGRESS */
 .progress-bar {
     margin-top:20px;
     background:#eee;
     border-radius:10px;
+    height:10px;
     overflow:hidden;
 }
 
-.progress {
-    height:10px;
-    width:60%;
+.progress-fill {
+    height:100%;
+    width:0%; /* SAFE DEFAULT */
     background:linear-gradient(to right,#6366f1,#a855f7);
 }
 
-/* BUTTONS */
 .actions {
     margin-top:25px;
     display:flex;
@@ -194,7 +190,6 @@ body {
     background:#fde68a;
 }
 
-/* ANIMATION */
 @keyframes fadeIn {
     from {opacity:0; transform:translateY(20px);}
     to {opacity:1; transform:translateY(0);}
@@ -212,12 +207,10 @@ body {
 
         <h2>📚 Course Content</h2>
 
-        <!-- SEARCH -->
         <div class="search-box">
             <input type="text" placeholder="Search lessons...">
         </div>
 
-        <!-- FILTER -->
         <div class="filter">
             <select>
                 <option>All Levels</option>
@@ -234,15 +227,35 @@ body {
 
             <div class="lessons">
 
-                <!-- ✅ FIXED LESSON CLICK -->
-                <div th:each="l : ${cm.lecons}" class="lesson">
+                <!-- LESSONS -->
+				<div th:each="l : ${cm.lecons}"
+				     th:class="'lesson ' + (${completedLessons != null and completedLessons.contains(l.id)} ? 'done' : '')">
+				    
+				    <a th:href="@{/apprenant/lecon/{id}(id=${l.id})}"
+				       style="text-decoration:none; color:inherit; display:block;">
+				        <span th:text="${l.titre}"></span>
+				    </a>
 
-                    <a th:href="@{/apprenant/lecon/{id}(id=${l.id})}"
-                       style="text-decoration:none; color:inherit; display:block;">
-
-                        <span th:text="${l.titre}"></span>
-
-                    </a>
+				    <form th:action="@{/lecon/{id}/complete(id=${l.id})}" method="post">
+				        <button type="submit"
+				                style="padding:6px 10px; margin-top:5px; background:green; color:white; border:none; border-radius:6px; cursor:pointer;">
+				            ✔ Done
+				        </button>
+				    </form>
+				</div>
+                    <form th:action="@{/lecon/{id}/complete(id=${l.id})}" method="post">
+                        <button type="submit"
+                                style="
+                                    padding:6px 10px;
+                                    margin-top:5px;
+                                    background:green;
+                                    color:white;
+                                    border:none;
+                                    border-radius:6px;
+                                    cursor:pointer;">
+                            ✔ Done
+                        </button>
+                    </form>
 
                 </div>
 
@@ -274,10 +287,12 @@ body {
                 <div>👨‍🎓 1200 students</div>
             </div>
 
-            <div class="progress-bar">
-                <div class="progress"></div>
-            </div>
-
+            <!-- SAFE PROGRESS BAR -->
+			<div class="progress-bar">
+			    <div class="progress-fill"
+			         th:style="'width:' + ${progressPercent} + '%'">
+			    </div>
+			</div>
             <div class="actions">
                 <button class="btn enroll">🚀 Enroll Now</button>
                 <button class="btn favorite">❤️ Favorite</button>

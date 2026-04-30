@@ -3,18 +3,17 @@ package com.fst.elearning.entity;
 import jakarta.persistence.*;
 
 @Entity
-
 public class LessonProgress {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Utilisateur utilisateur;
+    private Long userId;
 
-    @ManyToOne
-    private Lecon lecon;
+    private Long lessonId;
 
     private boolean completed = true;
+
+    // getters setters
 }

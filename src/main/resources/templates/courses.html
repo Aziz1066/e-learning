@@ -232,7 +232,7 @@ body::after {
     <div class="course-card" th:each="c : ${courses}">
 
         <div class="course-image">
-            <img th:src="@{'/images/' + ${c.imageUrl}}" alt="course image">
+           <img th:src="@{${c.imageUrl}}" alt="course image">
         </div>
 
         <div class="course-content">
