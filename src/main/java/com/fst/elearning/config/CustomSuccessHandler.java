@@ -28,7 +28,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
             response.sendRedirect("/formateur/home");
         }
         else if (roles.contains("ROLE_APPRENANT")) {
-            response.sendRedirect("/apprenant/home");
+            response.sendRedirect("/courses");
         }
         else {
             response.sendRedirect("/");

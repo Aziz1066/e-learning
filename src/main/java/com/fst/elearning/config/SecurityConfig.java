@@ -1,18 +1,15 @@
 package com.fst.elearning.config;
 
-
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 
 import com.fst.elearning.service.CustomUserDetailsService;
-import com.fst.elearning.config.CustomSuccessHandler;
 
 @Configuration
 public class SecurityConfig {
@@ -20,7 +17,6 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final CustomSuccessHandler successHandler;
 
-    // Constructor injection
     public SecurityConfig(CustomUserDetailsService userDetailsService,
                           CustomSuccessHandler successHandler) {
         this.userDetailsService = userDetailsService;
@@ -31,37 +27,36 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-            // ⚠️ CSRF disabled (OK for dev, enable later for production)
             .csrf(csrf -> csrf.disable())
 
-            // 🔐 Authorization rules
             .authorizeHttpRequests(auth -> auth
 
-                // Public pages
+                // PUBLIC pages
                 .requestMatchers(
                     "/", "/home", "/login", "/register",
-                    "/css/**", "/js/**", "/images/**"
+                    "/css/**", "/js/**", "/images/**",
+                    "/uploads/**"   // still OK
                 ).permitAll()
 
-                // Role-based access
+                // ROLE-BASED routes
                 .requestMatchers("/formateur/**").hasRole("FORMATEUR")
                 .requestMatchers("/apprenant/**").hasRole("APPRENANT")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
 
-                // Everything else requires login
+                // authenticated only
+                .requestMatchers("/courses").authenticated()
+
                 .anyRequest().authenticated()
             )
 
-            // 🔑 LOGIN CONFIG
             .formLogin(form -> form
-                .loginPage("/login")               // custom login page
-                .loginProcessingUrl("/login")      // form action
-                .successHandler(successHandler)    // 🔥 ROLE REDIRECTION HERE
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .successHandler(successHandler)
                 .failureUrl("/login?error=true")
                 .permitAll()
             )
 
-            // 🚪 LOGOUT CONFIG
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
@@ -70,13 +65,17 @@ public class SecurityConfig {
                 .permitAll()
             )
 
-            // 🧠 USER DETAILS SERVICE
             .userDetailsService(userDetailsService);
 
         return http.build();
     }
 
-    // 🔐 Password encoder (VERY IMPORTANT)
+    // 🔥 IMPORTANT FIX (THIS IS WHAT YOU WERE MISSING)
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/uploads/**");
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Course Platform</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+body {
+    margin:0;
+    font-family:'Poppins', sans-serif;
+    background: linear-gradient(120deg, #eef2ff, #f5f3ff, #ede9fe),
+                url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3');
+    background-size: cover;
+    background-blend-mode: overlay;
+}
+
+/* LAYOUT */
+.wrapper {
+    display:flex;
+    height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width:320px;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(20px);
+    padding:20px;
+    overflow-y:auto;
+    border-right:1px solid rgba(0,0,0,0.05);
+}
+
+/* SEARCH */
+.search-box input {
+    width:100%;
+    padding:10px;
+    border-radius:10px;
+    border:none;
+    margin-bottom:15px;
+    outline:none;
+    background:#f1f1ff;
+}
+
+/* FILTER */
+.filter select {
+    width:100%;
+    padding:8px;
+    border-radius:10px;
+    border:none;
+    margin-bottom:15px;
+}
+
+/* MODULE */
+.module {
+    margin-bottom:15px;
+    padding:15px;
+    border-radius:12px;
+    background: rgba(99,102,241,0.1);
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.module:hover {
+    background: rgba(99,102,241,0.2);
+    transform: scale(1.02);
+}
+
+.module-title {
+    font-weight:600;
+    color:#4f46e5;
+}
+
+/* LESSONS */
+.lessons {
+    display:none;
+    margin-top:10px;
+}
+
+.lesson {
+    padding:8px 10px;
+    margin-top:5px;
+    border-radius:8px;
+    background: rgba(255,255,255,0.8);
+    transition:0.3s;
+}
+
+.lesson:hover {
+    background:#6366f1;
+    color:white;
+    transform:translateX(5px);
+}
+
+/* MAIN CONTENT */
+.content {
+    flex:1;
+    padding:40px;
+}
+
+/* COURSE CARD */
+.course-card {
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(20px);
+    border-radius:20px;
+    padding:30px;
+    max-width:850px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.1);
+    animation:fadeIn 1s ease;
+}
+
+/* TITLE */
+.course-card h1 {
+    font-size:34px;
+    margin-bottom:10px;
+    color:#4f46e5;
+}
+
+/* TAGS */
+.tags {
+    margin-top:15px;
+}
+
+.tag {
+    display:inline-block;
+    background:linear-gradient(135deg,#6366f1,#a855f7);
+    color:white;
+    padding:6px 12px;
+    border-radius:10px;
+    margin-right:10px;
+    font-size:13px;
+}
+
+/* EXTRA INFO */
+.extra {
+    margin-top:20px;
+    display:flex;
+    gap:20px;
+    font-size:14px;
+    color:#555;
+}
+
+/* RATING */
+.stars {
+    color:gold;
+}
+
+/* PROGRESS */
+.progress-bar {
+    margin-top:20px;
+    background:#eee;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.progress {
+    height:10px;
+    width:60%;
+    background:linear-gradient(to right,#6366f1,#a855f7);
+}
+
+/* BUTTONS */
+.actions {
+    margin-top:25px;
+    display:flex;
+    gap:15px;
+}
+
+.btn {
+    border:none;
+    padding:10px 18px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:500;
+    transition:0.3s;
+}
+
+.enroll {
+    background:linear-gradient(135deg,#6366f1,#a855f7);
+    color:white;
+}
+
+.enroll:hover {
+    transform:scale(1.05);
+    box-shadow:0 8px 20px rgba(99,102,241,0.4);
+}
+
+.favorite {
+    background:#f3f4f6;
+}
+
+.favorite:hover {
+    background:#fde68a;
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+    from {opacity:0; transform:translateY(20px);}
+    to {opacity:1; transform:translateY(0);}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+        <h2>📚 Course Content</h2>
+
+        <!-- SEARCH -->
+        <div class="search-box">
+            <input type="text" placeholder="Search lessons...">
+        </div>
+
+        <!-- FILTER -->
+        <div class="filter">
+            <select>
+                <option>All Levels</option>
+                <option>Beginner</option>
+                <option>Intermediate</option>
+                <option>Advanced</option>
+            </select>
+        </div>
+
+        <!-- MODULES -->
+        <div th:each="cm : ${course.modules}" class="module" onclick="toggle(this)">
+
+            <div class="module-title" th:text="${cm.titre}"></div>
+
+            <div class="lessons">
+
+                <!-- ✅ FIXED LESSON CLICK -->
+                <div th:each="l : ${cm.lecons}" class="lesson">
+
+                    <a th:href="@{/apprenant/lecon/{id}(id=${l.id})}"
+                       style="text-decoration:none; color:inherit; display:block;">
+
+                        <span th:text="${l.titre}"></span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="content">
+
+        <div class="course-card">
+
+            <h1 th:text="${course.titre}"></h1>
+
+            <p th:text="${course.description}"></p>
+
+            <div class="tags">
+                <span class="tag" th:text="${course.categorie}"></span>
+                <span class="tag" th:text="${course.niveau}"></span>
+                <span class="tag"
+                      th:text="${course.formateur != null ? course.formateur.nom : 'Unknown'}">
+                </span>
+            </div>
+
+            <div class="extra">
+                <div class="stars">★★★★★</div>
+                <div>⏱ 12 hours</div>
+                <div>👨‍🎓 1200 students</div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+
+            <div class="actions">
+                <button class="btn enroll">🚀 Enroll Now</button>
+                <button class="btn favorite">❤️ Favorite</button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function toggle(el){
+    let lessons = el.querySelector(".lessons");
+    lessons.style.display =
+        lessons.style.display === "block" ? "none" : "block";
+}
+</script>
+
+</body>
+</html>

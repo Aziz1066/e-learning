@@ -2,28 +2,10 @@ package com.fst.elearning.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.OrderBy;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "module")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class CoursModule {
     
     @Id
@@ -42,18 +24,60 @@ public class CoursModule {
     @JoinColumn(name = "cours_id", nullable = false)
     private Cours cours;
     
-    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = Lecon.class)
+    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("ordre ASC")
     private List<Lecon> lecons = new ArrayList<>();
-    
-    @OneToOne(mappedBy = "module", cascade = CascadeType.ALL)
-    private Quiz quiz;
 
-	public Integer getOrdre() {
-		return ordre;
-	}
+    // --- CONSTRUCTEURS ---
+    public CoursModule() {}
 
-	public void setOrdre(Integer ordre) {
-		this.ordre = ordre;
-	}
+    // --- GETTERS ET SETTERS (Obligatoires pour Thymeleaf) ---
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitre() {
+        return titre;
+    }
+
+    public void setTitre(String titre) {
+        this.titre = titre;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getOrdre() {
+        return ordre;
+    }
+
+    public void setOrdre(Integer ordre) {
+        this.ordre = ordre;
+    }
+
+    public Cours getCours() {
+        return cours;
+    }
+
+    public void setCours(Cours cours) {
+        this.cours = cours;
+    }
+
+    public List<Lecon> getLecons() {
+        return lecons;
+    }
+
+    public void setLecons(List<Lecon> lecons) {
+        this.lecons = lecons;
+    }
 }

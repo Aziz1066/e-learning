@@ -1,55 +1,82 @@
 package com.fst.elearning.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "lecon")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Lecon {  // ← Changé : 'lecon' → 'Lecon' (majuscule)
-    
+public class Lecon {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(nullable = false)
     private String titre;
-    
+
     @Column(columnDefinition = "TEXT")
     private String contenu;
-    
+
     private Integer ordre;
-    
     private Integer dureeMin;
+
+    // ✅ NEW FIELD: PDF FILE PATH
+    private String pdfUrl;
     
+
     @ManyToOne
     @JoinColumn(name = "module_id", nullable = false)
-    private CoursModule module;  // ← Changé : 'module' → 'CoursModule'
+    private CoursModule module;
 
-	public Integer getOrdre() {
-		return ordre;
-	}
+    public Lecon() {}
 
-	public void setOrdre(Integer ordre) {
-		this.ordre = ordre;
-	}
+    // ================= GETTERS / SETTERS =================
 
-	public Integer getDureeMin() {
-		return dureeMin;
-	}
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setDureeMin(Integer dureeMin) {
-		this.dureeMin = dureeMin;
-	}
+    public String getTitre() {
+        return titre;
+    }
+    public void setTitre(String titre) {
+        this.titre = titre;
+    }
+
+    public String getContenu() {
+        return contenu;
+    }
+    public void setContenu(String contenu) {
+        this.contenu = contenu;
+    }
+
+    public Integer getOrdre() {
+        return ordre;
+    }
+    public void setOrdre(Integer ordre) {
+        this.ordre = ordre;
+    }
+
+    public Integer getDureeMin() {
+        return dureeMin;
+    }
+    public void setDureeMin(Integer dureeMin) {
+        this.dureeMin = dureeMin;
+    }
+
+    public String getPdfUrl() {
+        return pdfUrl;
+    }
+    public void setPdfUrl(String pdfUrl) {
+        this.pdfUrl = pdfUrl;
+    }
+
+    public CoursModule getModule() {
+        return module;
+    }
+    public void setModule(CoursModule module) {
+        this.module = module;
+    }
 }
