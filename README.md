@@ -1,4 +1,8 @@
 # e-learning
+<<<<<<< HEAD
 Ce projet e-learning a été réalisé en collaboration entre moi et ma collègue, avec une répartition des tâches assez équilibrée et un travail complémentaire tout au long du développement. 
 Ma collègue a pris en charge la mise en place initiale du projet en créant sa structure globale et en configurant l’environnement de travail. Elle a développé le package config en posant les bases de la configuration, ainsi que le package controller en définissant les premières fonctionnalités et la navigation entre les pages. Elle a également conçu les packages entity et service, en structurant les modèles de données et la logique métier, ce qui a permis d’avoir une base claire et organisée. En parallèle, elle a réalisé les templates HTML pour l’interface utilisateur et installé les dépendances nécessaires au bon fonctionnement de l’application.
 De mon côté, je suis intervenu pour enrichir et améliorer le projet. J’ai apporté des modifications au package config afin d’adapter et affiner la configuration existante, notamment en lien avec la sécurité. J’ai aussi retravaillé le package controller pour intégrer correctement la fonctionnalité d’inscription et assurer son bon fonctionnement avec les pages. Enfin, j’ai mis en place la base de données pour permettre le stockage des utilisateurs et assurer la persistance des données.
+=======
+E-learning platform built with Spring Boot for managing courses and users.
+>>>>>>> 2dd3a5756d820ff0710273922c2cf9dd2513cfa1
