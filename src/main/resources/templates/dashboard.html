@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Apprenant Dashboard</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5ff;
+        }
+
+        .header {
+            background: #a855f7;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .container {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #6b21a8;
+        }
+
+        .desc {
+            font-size: 14px;
+            color: #555;
+            margin-top: 8px;
+        }
+
+        .meta {
+            font-size: 13px;
+            color: #777;
+            margin-top: 8px;
+        }
+
+        .progress-text {
+            margin-top: 12px;
+            font-weight: 500;
+            color: #9333ea;
+        }
+
+        .progress-bar {
+            background: #eee;
+            border-radius: 10px;
+            height: 10px;
+            margin-top: 8px;
+        }
+
+        .progress {
+            background: #a855f7;
+            height: 10px;
+            border-radius: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    🎓 Apprenant Dashboard
+</div>
+
+<div class="container">
+
+    <!-- LOOP INSCRIPTIONS -->
+    <div class="card" th:each="i : ${inscriptions}">
+
+        <!-- COURSE TITLE -->
+        <div class="title"
+             th:text="${i.cours.titre}">
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="desc"
+             th:text="${i.cours.description}">
+        </div>
+
+        <!-- CATEGORY -->
+        <div class="meta">
+            📚 Catégorie:
+            <span th:text="${i.cours.categorie}"></span>
+        </div>
+
+        <!-- LEVEL -->
+        <div class="meta">
+            📊 Niveau:
+            <span th:text="${i.cours.niveau}"></span>
+        </div>
+
+        <!-- PROGRESS TEXT -->
+        <div class="progress-text">
+            Progression:
+            <span th:text="${progressMap[i.cours.id]} + '%'"></span>
+        </div>
+
+        <!-- PROGRESS BAR -->
+        <div class="progress-bar">
+            <div class="progress"
+                 th:style="'width:' + ${progressMap[i.cours.id]} + '%'">
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription Sécurisée · EduSpark</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #5D3FD3;
+            --secondary: #2D3B5E;
+            --accent: #8B5CF6;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #F3F4F6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1100px; /* Format horizontal PC */
+            display: flex;
+            min-height: 650px;
+        }
+
+        /* Sidebar gauche : Rôles */
+        .sidebar-roles {
+            background: var(--secondary);
+            width: 320px;
+            padding: 40px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .role-selector {
+            margin-top: 40px;
+        }
+
+        .role-btn {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .role-btn:hover { background: rgba(255,255,255,0.15); }
+
+        .role-btn.active {
+            background: var(--primary);
+            border-color: var(--accent);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .role-btn i { font-size: 1.5rem; width: 30px; text-align: center; }
+
+        /* Formulaire à droite */
+        .form-content {
+            flex: 1;
+            padding: 50px;
+            overflow-y: auto;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 12px 15px;
+            border: 1px solid #E5E7EB;
+            background: #F9FAFB;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 4px rgba(93, 63, 211, 0.1);
+            border-color: var(--primary);
+        }
+
+        /* Password Strength Meter */
+        .strength-meter {
+            height: 6px;
+            background: #E5E7EB;
+            margin-top: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .strength-bar { height: 100%; width: 0%; transition: 0.3s; }
+        .weak { background: #EF4444; width: 33%; }
+        .medium { background: #F59E0B; width: 66%; }
+        .strong { background: #10B981; width: 100%; }
+
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 0 5px;
+            border-radius: 10px;
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-weight: 700;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 992px) {
+            .register-container { flex-direction: column; }
+            .sidebar-roles { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="register-container">
+    <!-- GAUCHE : CHOIX DU RÔLE -->
+    <div class="sidebar-roles">
+        <div>
+            <h3 class="fw-800"><i class="fas fa-rocket me-2"></i>EduSpark</h3>
+            <p class="small opacity-75">Veuillez sélectionner votre type de profil pour continuer.</p>
+            
+            <div class="role-selector">
+                <div class="role-btn active" onclick="setRole('APPRENANT', this)">
+                    <i class="fas fa-user-graduate"></i>
+                    <div>
+                        <div class="fw-bold">Apprenant</div>
+                        <div class="small opacity-50">Accès aux cours</div>
+                    </div>
+                </div>
+                
+                <div class="role-btn" onclick="setRole('FORMATEUR', this)">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <div>
+                        <div class="fw-bold">Formateur</div>
+                        <div class="small opacity-50">Création de contenu</div>
+                    </div>
+                </div>
+
+                <div class="role-btn" onclick="setRole('ADMIN', this)">
+                    <i class="fas fa-user-shield"></i>
+                    <div>
+                        <div class="fw-bold">Administrateur</div>
+                        <div class="small opacity-50">Gestion plateforme</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <a href="/login" class="text-white text-decoration-none small"><i class="fas fa-arrow-left me-2"></i>Déjà inscrit ? Connexion</a>
+        </div>
+    </div>
+
+    <!-- DROITE : FORMULAIRE -->
+    <div class="form-content">
+        <h2 class="fw-bold mb-4">Créer un compte</h2>
+        
+        <form id="regForm" th:action="@{/register}" method="post">
+            <input type="hidden" name="role" id="selectedRole" value="APPRENANT">
+            
+            <div class="row g-3">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label small fw-bold text-muted">NOM COMPLET</label>
+                    <input type="text" name="nom" id="nom" class="form-control" placeholder="Jean Dupont" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label small fw-bold text-muted">ADRESSE EMAIL</label>
+                    <div class="input-group">
+                        <input type="email" name="email" id="email" class="form-control" placeholder="jean@exemple.com" required>
+                        <button type="button" class="btn btn-outline-primary" onclick="sendOTP()">Vérifier</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION OTP (Masquée par défaut) -->
+            <div id="otpSection" class="mb-4 p-3 border rounded-3" style="display:none; background: #f0f7ff;">
+                <label class="form-label small fw-bold text-primary"><i class="fas fa-key me-2"></i>CODE DE VÉRIFICATION (OTP)</label>
+                <div class="d-flex justify-content-center my-2">
+                    <input type="text" maxlength="1" class="form-control otp-input">
+                    <input type="text" maxlength="1" class="form-control otp-input">
+                    <input type="text" maxlength="1" class="form-control otp-input">
+                    <input type="text" maxlength="1" class="form-control otp-input">
+                </div>
+                <p class="text-center small text-muted">Un code a été envoyé à votre email.</p>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">MOT DE PASSE SÉCURISÉ</label>
+                <input type="password" name="password" id="password" class="form-control" onkeyup="checkPasswordStrength()" required>
+                <div class="strength-meter">
+                    <div id="strengthBar" class="strength-bar"></div>
+                </div>
+                <ul class="small text-muted mt-2 ps-3" id="passRequirements">
+                    <li id="reqLength">Min. 8 caractères</li>
+                    <li id="reqUpper">Majuscule, Chiffre & Symbole</li>
+                    <li id="reqPersonal">Aucun nom/prénom/email inclus</li>
+                </ul>
+            </div>
+
+            <div class="form-check mb-4">
+                <input type="checkbox" class="form-check-input" id="terms" required>
+                <label class="form-check-label small" for="terms">J'accepte les conditions de haute sécurité et le cryptage JWT de mes données.</label>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-shield-check me-2"></i> FINALISER L'INSCRIPTION
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Gestion du rôle
+    function setRole(role, element) {
+        document.getElementById('selectedRole').value = role;
+        document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+        element.classList.add('active');
+    }
+
+    // Simulation Envoi OTP
+    function sendOTP() {
+        const email = document.getElementById('email').value;
+        if(email.includes('@')) {
+            document.getElementById('otpSection').style.display = 'block';
+            alert("Un code OTP a été envoyé à " + email);
+        } else {
+            alert("Veuillez saisir une adresse email valide.");
+        }
+    }
+
+    // Vérification de la force du mot de passe
+    function checkPasswordStrength() {
+        const password = document.getElementById('password').value;
+        const nom = document.getElementById('nom').value.toLowerCase();
+        const email = document.getElementById('email').value.split('@')[0].toLowerCase();
+        const bar = document.getElementById('strengthBar');
+        
+        let strength = 0;
+        
+        // Critères techniques
+        if (password.length >= 8) { strength++; document.getElementById('reqLength').style.color = 'green'; } else { document.getElementById('reqLength').style.color = '#6c757d'; }
+        if (/[A-Z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password)) { 
+            strength++; document.getElementById('reqUpper').style.color = 'green'; 
+        } else { document.getElementById('reqUpper').style.color = '#6c757d'; }
+
+        // Critère d'exclusion (Nom/Prénom/Email)
+        const isPersonal = (nom && password.toLowerCase().includes(nom)) || (email && password.toLowerCase().includes(email));
+        if (password !== "" && !isPersonal) {
+            strength++; document.getElementById('reqPersonal').style.color = 'green';
+        } else {
+            document.getElementById('reqPersonal').style.color = 'red';
+            strength = Math.max(0, strength - 1);
+        }
+
+        // Affichage barre
+        bar.className = 'strength-bar';
+        if (strength === 1) bar.classList.add('weak');
+        if (strength === 2) bar.classList.add('medium');
+        if (strength === 3) bar.classList.add('strong');
+    }
+
+    // Focus auto pour OTP
+    const inputs = document.querySelectorAll('.otp-input');
+    inputs.forEach((input, index) => {
+        input.addEventListener('keyup', (e) => {
+            if (e.target.value.length === 1 && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des Modules</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: #fcfaff; }
+        .header { background: linear-gradient(90deg, #a855f7, #6b21a8); color: white; padding: 20px; text-align: center; font-size: 22px; }
+        .container { padding: 30px; max-width: 900px; margin: auto; }
+        .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .module-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; }
+        .btn { padding: 8px 15px; border-radius: 10px; text-decoration: none; font-size: 13px; color: white; border: none; cursor: pointer; display: inline-block; }
+        .btn-add { background: #a855f7; }
+        .btn-lecons { background: #10b981; margin-right: 5px; }
+        .btn-delete { background: #ef4444; }
+        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <div class="header">📦 Modules du cours : <span th:text="${cours.titre}"></span></div>
+    <div class="container">
+        <a th:href="@{/formateur/cours}" style="color: #a855f7; text-decoration: none;">⬅ Retour aux cours</a>
+        <div class="card" style="margin-top: 20px;">
+            <h3>➕ Ajouter un module</h3>
+            <form th:action="@{/formateur/cours/{id}/modules/save(id=${cours.id})}" th:object="${newModule}" method="post">
+                <input type="text" th:field="*{titre}" placeholder="Nom du module" required>
+                <textarea th:field="*{description}" placeholder="Description..."></textarea>
+                <input type="number" th:field="*{ordre}" placeholder="Ordre">
+                <button type="submit" class="btn btn-add">Ajouter le module</button>
+            </form>
+        </div>
+        <div class="card">
+            <h3>Liste des modules</h3>
+            <div th:each="m : ${modules}" class="module-item">
+                <div>
+                    <strong th:text="${m.ordre + '. ' + m.titre}"></strong>
+                </div>
+                <div>
+                    <a th:href="@{/formateur/modules/{id}/lecons(id=${m.id})}" class="btn btn-lecons">📖 Leçons</a>
+                    <a th:href="@{/formateur/modules/delete/{id}(id=${m.id})}" class="btn btn-delete" onclick="return confirm('Supprimer ce module ?')">Supprimer</a>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(modules)}" style="text-align: center; color: #999; padding: 10px;">
+                Aucun module pour le moment.
+            </div>
+        </div>
+    </div>
+</body>
+</html>
